@@ -5,8 +5,6 @@ plotting and tracking weight. There is also a Jupyter Notebook.
 Copyright 2017 Jim Lanzi
 License: GNU GPLv3 http://www.gnu.org/licenses/gpl.html
 """
-import matplotlib.pyplot as plt
-from matplotlib.dates import DateFormatter
 from numpy import array, arange, ones, zeros, hstack, exp, asarray, log
 from numpy import min as npmin
 from numpy import loadtxt
@@ -110,6 +108,8 @@ for d in range(1,lookAheadDays):
     dtplt = hstack((dtplt,dtplt[-1]+timedelta(days=1)))
 
 if doPlot:
+    import matplotlib.pyplot as plt
+    from matplotlib.dates import DateFormatter
     plt.figure(1)
     plt.plot(dt, wgt-wfit(td,*popt))
     plt.grid(True)
