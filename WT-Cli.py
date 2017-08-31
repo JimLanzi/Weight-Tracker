@@ -28,7 +28,7 @@ dt = [date(y[i],m[i],d[i]) for i in range(0,len(y))]
 
 # Set up a day count array for curve fitting
 N = len(dt)
-td = arange(0.0,float(N))
+td = array([(date(y[i],m[i],d[i])-date(y[0],m[0],d[0])).days for i in range(0,len(y))])
 
 # Weekly minimums
 Nw = int(N / 7)
@@ -45,7 +45,7 @@ for w in range(1,Nw):
 # Compute raw day-to-day loss rate
 rawdwdt = arange(0.0, float(N))
 for i in range(1,N):
-    rawdwdt[i] = (wgt[i-1] - wgt[i])*7.0
+    rawdwdt[i] = (wgt[i-1] - wgt[i])/(td[i]-td[i-1])*7.0
 
 # Exponential Curve Fit
 def wfit(t, w0, tc, winf):
@@ -110,15 +110,16 @@ for d in range(1,lookAheadDays):
 if doPlot:
     import matplotlib.pyplot as plt
     from matplotlib.dates import DateFormatter
-    plt.figure(1)
+    fig = plt.figure(1)
     plt.plot(dt, wgt-wfit(td,*popt))
     plt.grid(True)
     plt.ylabel('Delta Weight from Trend - lb')
     plt.gcf().axes[0].xaxis.set_major_formatter(DateFormatter('%m/%d/%Y'))
     plt.gcf().autofmt_xdate()
+    fig.tight_layout()
     
     
-    plt.figure(2)
+    fig = plt.figure(2)
     plt.plot(dt, rawdwdt)
     plt.plot(dtplt, dwdt(tdplt,*popt),'r', label=slopeLabel)
     plt.grid(True)
@@ -126,6 +127,7 @@ if doPlot:
     plt.legend()
     plt.gcf().axes[0].xaxis.set_major_formatter(DateFormatter('%m/%d/%Y'))
     plt.gcf().autofmt_xdate()
+    fig.tight_layout()
     
     
     fig,ax1 = plt.subplots()
@@ -134,7 +136,7 @@ if doPlot:
     ax1.plot(dtwk, wtByWeek,'g--')
     ax1.grid(True)
     ax1.set_ylabel('Weight - lb')
-    ax1.set_ylim(185,235)
+    ax1.set_ylim(180,235)
     ax1.legend()
     ax1.xaxis.set_major_formatter(DateFormatter('%m/%d/%Y'))
     fig.autofmt_xdate()
